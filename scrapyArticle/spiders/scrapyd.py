@@ -1,10 +1,11 @@
-import scrapy
+# -*- coding: utf-8 -*-
 
-from scrapyArticle.sendemail.sendemail import err_spider
+import scrapy
 
 
 class scrapyd(scrapy.Spider):  # 需要继承scrapy.Spider类
     name = "scrapyd"  # 定义蜘蛛名
+
     def start_requests(self):  # 由此方法通过下面链接爬取页面
         # 定义爬取的链接
         urls = [
@@ -12,12 +13,7 @@ class scrapyd(scrapy.Spider):  # 需要继承scrapy.Spider类
             'http://lab.scrapyd.cn/page/2/',
         ]
         for url in urls:
-            try:
-                yield scrapy.Request(url=url, callback=self.parse)  # 爬取到的页面如何处理？提交给parse方法处理
-            except Exception as e:
-                # 发送邮件
-                dispatcher.send(signal=err_spider, error=traceback.format_exc())
-
+            yield scrapy.Request(url=url, callback=self.parse)  # 爬取到的页面如何处理？提交给parse方法处理
 
     def parse(self, response):
         '''
@@ -35,3 +31,20 @@ class scrapyd(scrapy.Spider):  # 需要继承scrapy.Spider类
         with open(filename, 'wb') as f:  # python文件操作，不多说了；
             f.write(response.body)  # 刚才下载的页面去哪里了？response.body就代表了刚才下载的页面！
         self.log('保存文件: %s' % filename)  # 打个日志
+
+    def closed(self, reason):  # 爬取结束的时候发送邮件
+        from scrapy.mail import MailSender
+        # mailer = MailSender.from_settings(settings)# 出错了，没找到原因
+        mailer = MailSender(smtphost="smtp.163.com",  # 发送邮件的服务器
+                            mailfrom="xxx@163.com",  # 邮件发送者
+                            smtpuser="xxx@163.com",  # 用户名
+                            smtppass="***********",  # 发送邮箱的密码不是你注册时的密码，而是授权码！！！切记！
+                            smtpport=25  # 端口号
+                            )
+        body = u""" 
+        发送的邮件内容
+        """
+        subject = u'发送的邮件标题'
+        # 如果说发送的内容太过简单的话，很可能会被当做垃圾邮件给禁止发送。
+        mailer.send(to=["xxx@163.com", "xxx@163.com"], subject=subject.encode("utf-8"),
+                    body=body.encode("utf-8"))

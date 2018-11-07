@@ -8,6 +8,7 @@
           <option value="scrapyArticle.sendemail.sendemail.mail_conf" />
           <option value="scrapyArticle.spiders.scrapyd.dispatcher" />
           <option value="scrapyArticle.spiders.scrapyd.traceback" />
+          <option value="mail_config" />
         </list>
       </option>
     </inspection_tool>
