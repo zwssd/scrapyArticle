@@ -33,18 +33,20 @@ class scrapyd(scrapy.Spider):  # 需要继承scrapy.Spider类
         self.log('保存文件: %s' % filename)  # 打个日志
 
     def closed(self, reason):  # 爬取结束的时候发送邮件
+        self.log('=====>>>>>: start sendmail')  # 打个日志
         from scrapy.mail import MailSender
         # mailer = MailSender.from_settings(settings)# 出错了，没找到原因
-        mailer = MailSender(smtphost="smtp.163.com",  # 发送邮件的服务器
-                            mailfrom="xxx@163.com",  # 邮件发送者
-                            smtpuser="xxx@163.com",  # 用户名
-                            smtppass="***********",  # 发送邮箱的密码不是你注册时的密码，而是授权码！！！切记！
-                            smtpport=25  # 端口号
+        mailer = MailSender(smtphost="smtp.qq.com",  # 发送邮件的服务器
+                            mailfrom="xxx@qq.com",  # 邮件发送者
+                            smtpuser="xxx",  # 用户名
+                            smtppass="xxxxxx",  # 发送邮箱的密码不是你注册时的密码，而是授权码！！！切记！
+                            smtpport=465,  # 端口号
+                            smtpssl=True
                             )
         body = u""" 
-        发送的邮件内容
+        发送的邮件内容sdfasdfasdfasdfasdfasdfasdf
         """
         subject = u'发送的邮件标题'
         # 如果说发送的内容太过简单的话，很可能会被当做垃圾邮件给禁止发送。
-        mailer.send(to=["xxx@163.com", "xxx@163.com"], subject=subject.encode("utf-8"),
-                    body=body.encode("utf-8"))
+        mailer.send(to=["xxx@qq.com"], subject=subject, body=body)
+        self.log('=====>>>>>: finish sendmail')  # 打个日志
