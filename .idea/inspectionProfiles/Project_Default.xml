@@ -9,6 +9,7 @@
           <option value="scrapyArticle.spiders.scrapyd.dispatcher" />
           <option value="scrapyArticle.spiders.scrapyd.traceback" />
           <option value="mail_config" />
+          <option value="scrapy" />
         </list>
       </option>
     </inspection_tool>

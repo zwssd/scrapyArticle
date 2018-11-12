@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import scrapy
+import json
+
+from pip._vendor import requests
 
 
 class scrapyd(scrapy.Spider):  # 需要继承scrapy.Spider类
@@ -32,8 +35,15 @@ class scrapyd(scrapy.Spider):  # 需要继承scrapy.Spider类
             f.write(response.body)  # 刚才下载的页面去哪里了？response.body就代表了刚才下载的页面！
         self.log('保存文件: %s' % filename)  # 打个日志
 
-    def closed(self, reason):  # 爬取结束的时候发送邮件
-        self.log('=====>>>>>: start sendmail')  # 打个日志
+    def closed(self, reason):  # 爬取结束的时候发送消息
+
+        self.log('=====>>>>>: start dingtalk rebot')  # 打个日志
+        url = 'https://oapi.dingtalk.com/robot/send?access_token='
+        params = {"msgtype": "text","text": {"content": "我就是我,  @1730139xxxx 是不一样的烟火"},"at": {"atMobiles": ["1730139xxxx"], "isAtAll": "false"}}
+        requests.post(url, data=json.dumps(params), headers={'Content-Type': 'application/json'})
+        self.log('=====>>>>>: finish dingtalk rebot')  # 打个日志
+
+        '''self.log('=====>>>>>: start sendmail')  # 打个日志
         from scrapy.mail import MailSender
         # mailer = MailSender.from_settings(settings)# 出错了，没找到原因
         mailer = MailSender(smtphost="smtp.qq.com",  # 发送邮件的服务器
@@ -49,4 +59,4 @@ class scrapyd(scrapy.Spider):  # 需要继承scrapy.Spider类
         subject = u'发送的邮件标题'
         # 如果说发送的内容太过简单的话，很可能会被当做垃圾邮件给禁止发送。
         mailer.send(to=["xxx@qq.com"], subject=subject, body=body)
-        self.log('=====>>>>>: finish sendmail')  # 打个日志
+        self.log('=====>>>>>: finish sendmail')  # 打个日志'''
