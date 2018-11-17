@@ -25,11 +25,15 @@ class scrapyd(scrapy.Spider):  # 需要继承scrapy.Spider类
         self.log(response.xpath("//h3//@href").extract())
         self.log(response.xpath("//h3//a//text()").extract())
 
-        page = response.url.split("/")[-2]  # 根据上面的链接提取分页,如：/page/1/，提取到的就是：1
-        filename = 'mingyan-%s.html' % page  # 拼接文件名，如果是第一页，最终文件名便是：mingyan-1.html
-        with open(filename, 'wb') as f:  # python文件操作，不多说了；
-            f.write(response.body)  # 刚才下载的页面去哪里了？response.body就代表了刚才下载的页面！
-        self.log('保存文件: %s' % filename)  # 打个日志
+        urls = response.xpath("//h3//@href").extract()
+        for url in urls:
+            yield response.follow(url, callback=self.parse)  # it will filter duplication automatically
+
+        # page = response.url.split("/")[-2]  # 根据上面的链接提取分页,如：/page/1/，提取到的就是：1
+        # filename = 'mingyan-%s.html' % page  # 拼接文件名，如果是第一页，最终文件名便是：mingyan-1.html
+        # with open(filename, 'wb') as f:  # python文件操作，不多说了；
+        #     f.write(response.body)  # 刚才下载的页面去哪里了？response.body就代表了刚才下载的页面！
+        # self.log('保存文件: %s' % filename)  # 打个日志
 
     def closed(self, reason):  # 爬取结束的时候发送消息
         self.log('=====>>>>>: start dingtalk rebot')  # 打个日志
