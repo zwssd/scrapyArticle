@@ -25,6 +25,9 @@ class scrapyd(scrapy.Spider):  # 需要继承scrapy.Spider类
         self.log(response.xpath("//h3//@href").extract())
         self.log(response.xpath("//h3//a//text()").extract())
 
+
+        self.log(response.xpath("//h1//text()").extract())
+
         urls = response.xpath("//h3//@href").extract()
         for url in urls:
             yield response.follow(url, callback=self.parse)  # it will filter duplication automatically
